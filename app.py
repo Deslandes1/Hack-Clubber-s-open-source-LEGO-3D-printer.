@@ -1,5 +1,10 @@
 import streamlit as st
 
+# ============================================================
+#  Replace this with the actual direct URL to your demo video
+# ============================================================
+VIDEO_URL = "https://your-public-url.com/Demo1.mp4"
+
 st.set_page_config(
     page_title="The Future of Innovation | Studprint Story",
     page_icon="🧱",
@@ -11,7 +16,7 @@ st.set_page_config(
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-# ---------- CUSTOM CSS (dark theme with spinning globe, animations) ----------
+# ---------- CUSTOM CSS (dark theme, animations) ----------
 st.markdown(r"""
 <style>
     /* Main background */
@@ -79,6 +84,12 @@ st.markdown(r"""
         padding: 1rem;
         margin: 1rem 0;
         border: 1px solid #ffaa66;
+    }
+    .video-container {
+        margin: 2rem 0;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -170,6 +181,17 @@ def main_app():
     It’s <strong>how fast can we keep up with them?</strong>
     </div>
     """, unsafe_allow_html=True)
+
+    # ----- DEMO VIDEO SECTION -----
+    st.markdown("---")
+    st.markdown("## 🎬 See Studprint in Action")
+    st.markdown("Watch the open‑source LEGO 3D printer print real objects — a true breakthrough in accessible hardware innovation.")
+    
+    # Embed the video using st.video
+    try:
+        st.video(VIDEO_URL)
+    except Exception as e:
+        st.error(f"Could not load video. Please check the video URL. Error: {e}")
 
     st.markdown("---")
     st.markdown("### 🚀 Ready to build your own breakthrough?")
