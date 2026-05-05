@@ -1,9 +1,12 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 # ============================================================
-#  Replace this with the actual direct URL to your demo video
+#  You can also replace VIDEO_URL with a direct public .mp4 link
+#  if you have one (e.g., from Dropbox, Google Drive, or raw GitHub).
 # ============================================================
-VIDEO_URL = "https://your-public-url.com/Demo1.mp4"
+# VIDEO_URL = "https://raw.githubusercontent.com/Deslandes1/Hack-Clubber-s-open-source-LEGO-3D-printer/main/Demo1.mp4"
+# But GitHub raw doesn't always stream well. We'll use file upload.
 
 st.set_page_config(
     page_title="The Future of Innovation | Studprint Story",
@@ -15,15 +18,17 @@ st.set_page_config(
 # ---------- LOGIN STATE ----------
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
+if "demo_mode" not in st.session_state:
+    st.session_state.demo_mode = False
+if "video_file" not in st.session_state:
+    st.session_state.video_file = None
 
-# ---------- CUSTOM CSS (dark theme, animations) ----------
+# ---------- CUSTOM CSS ----------
 st.markdown(r"""
 <style>
-    /* Main background */
     .stApp {
         background: linear-gradient(135deg, #0b1120, #1a2332);
     }
-    /* Spinning globe animation */
     @keyframes spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
@@ -33,7 +38,6 @@ st.markdown(r"""
         animation: spin 4s linear infinite;
         font-size: 3rem;
     }
-    /* Powerful symbol (LEGO + 3D printer combo) */
     .power-symbol {
         font-size: 3rem;
         text-align: center;
@@ -44,7 +48,6 @@ st.markdown(r"""
         50% { transform: scale(1.1); opacity: 1; }
         100% { transform: scale(1); opacity: 0.8; }
     }
-    /* Story text */
     .story-text {
         font-family: 'Georgia', serif;
         font-size: 1.2rem;
@@ -55,28 +58,21 @@ st.markdown(r"""
         border-radius: 20px;
         border-left: 5px solid #ff6b6b;
     }
-    /* Headings */
     h1, h2, h3 {
         color: #ffaa66 !important;
     }
     .stMarkdown, .stSidebar .stMarkdown {
         color: #ffffff !important;
     }
-    /* Buttons */
     .stButton button {
         background-color: #ff6b6b !important;
         color: white !important;
         border-radius: 30px !important;
         font-weight: bold !important;
     }
-    /* Sidebar styling */
     [data-testid="stSidebar"] {
         background: #0a0f1a;
         border-right: 1px solid #2a3a4a;
-    }
-    .sidebar-brand {
-        text-align: center;
-        margin-bottom: 2rem;
     }
     .pricing-card {
         background: rgba(255,255,255,0.05);
@@ -89,7 +85,6 @@ st.markdown(r"""
         margin: 2rem 0;
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -110,9 +105,9 @@ def login_page():
             else:
                 st.error("Incorrect password. Try again.")
 
-# ---------- MAIN APP (after login) ----------
+# ---------- MAIN APP ----------
 def main_app():
-    # ----- SIDEBAR (spinning globe + contact + pricing) -----
+    # ----- SIDEBAR -----
     with st.sidebar:
         st.markdown('<div style="text-align: center;"><span class="spinning-globe">🌍</span></div>', unsafe_allow_html=True)
         st.markdown("---")
@@ -140,8 +135,22 @@ def main_app():
         st.markdown("---")
         st.caption("© 2026 GlobalInternet.py – Open Innovation")
 
-    # ----- MAIN CONTENT (the story) -----
-    # Powerful symbol at top
+        # ---- DEMO MODE TOGGLE ----
+        st.markdown("### 🧪 Demo Mode")
+        demo_mode = st.checkbox("Show Demo Video & 3D Model", value=st.session_state.demo_mode)
+        if demo_mode != st.session_state.demo_mode:
+            st.session_state.demo_mode = demo_mode
+            st.rerun()
+
+        # If demo mode is on, allow video upload (once)
+        if st.session_state.demo_mode:
+            st.markdown("**Upload the demo video (only once):**")
+            uploaded_video = st.file_uploader("Choose MP4 file", type=["mp4"], key="demo_video_upload")
+            if uploaded_video is not None:
+                st.session_state.video_file = uploaded_video
+                st.success("Video loaded! It will play below.")
+
+    # ----- MAIN CONTENT (story) -----
     st.markdown('<div class="power-symbol" style="display: flex; justify-content: center; gap: 20px;">🧱 🖨️ ⚡🔧</div>', unsafe_allow_html=True)
     st.title("Not every breakthrough starts in a lab.")
     st.markdown("### Some start with curiosity, creativity—and a box of bricks.")
@@ -149,7 +158,7 @@ def main_app():
     st.markdown("""
     <div class="story-text">
     An 18-year-old Hack Clubber just built an open-source 3D printer made from <strong>92% LEGO</strong> that actually works.  
-    Meet <strong>Studprint</strong> — designed and rendered on a PC powered by AMD Ryzen 5 7600X from AMD.
+    Meet <strong>Studprint</strong> — designed and rendered on a PC powered by AMD Ryzen 5 7600X.
 
     <br><br>
 
@@ -182,24 +191,98 @@ def main_app():
     </div>
     """, unsafe_allow_html=True)
 
-    # ----- DEMO VIDEO SECTION -----
-    st.markdown("---")
-    st.markdown("## 🎬 See Studprint in Action")
-    st.markdown("Watch the open‑source LEGO 3D printer print real objects — a true breakthrough in accessible hardware innovation.")
-    
-    # Embed the video using st.video
-    try:
-        st.video(VIDEO_URL)
-    except Exception as e:
-        st.error(f"Could not load video. Please check the video URL. Error: {e}")
+    # ----- DEMO SECTION -----
+    if st.session_state.demo_mode:
+        st.markdown("---")
+        st.markdown("## 🎬 Demo: Studprint in Action")
+
+        # 1. Display video if available
+        if st.session_state.video_file is not None:
+            st.video(st.session_state.video_file)
+        else:
+            st.info("Please upload the demo video using the sidebar 📂 (MP4 file).")
+
+        # 2. Simple 3D placeholder using Three.js (LEGO brick)
+        st.markdown("### 🧱 Interactive 3D LEGO Model")
+        st.markdown("_(Rotate and zoom to explore – this is a placeholder for the full 3D printer model)_")
+
+        lego_3d_html = """
+        <div id="lego-viewer" style="height: 400px; width: 100%; border-radius: 20px; overflow: hidden;"></div>
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                    "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+                }
+            }
+        </script>
+        <script type="module">
+            import * as THREE from 'three';
+            import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+            const container = document.getElementById('lego-viewer');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x111122);
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(2, 2, 3);
+            camera.lookAt(0, 0, 0);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            // A simple LEGO brick (2x4 studs)
+            const group = new THREE.Group();
+            const redMat = new THREE.MeshStandardMaterial({ color: 0xcc0000 });
+            const base = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.4, 0.8), redMat);
+            base.position.y = 0;
+            group.add(base);
+            // Studs
+            const studMat = new THREE.MeshStandardMaterial({ color: 0xcc0000 });
+            for (let x = -0.6; x <= 0.6; x+=0.6) {
+                for (let z = -0.3; z <= 0.3; z+=0.3) {
+                    const stud = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.1, 16), studMat);
+                    stud.position.set(x, 0.25, z);
+                    group.add(stud);
+                }
+            }
+            scene.add(group);
+
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(1, 2, 1);
+            scene.add(light);
+            const ambient = new THREE.AmbientLight(0x404060);
+            scene.add(ambient);
+            const grid = new THREE.GridHelper(5, 10, 0x88aaff, 0x335588);
+            scene.add(grid);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                renderer.setSize(w, h);
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+            });
+        </script>
+        """
+        components.html(lego_3d_html, height=400)
 
     st.markdown("---")
     st.markdown("### 🚀 Ready to build your own breakthrough?")
     st.markdown("Contact us for a free 15‑min consultation or explore the pricing plans on the sidebar.")
 
-    # Logout button
     if st.button("Logout", key="logout_btn"):
         st.session_state.authenticated = False
+        st.session_state.demo_mode = False
+        st.session_state.video_file = None
         st.rerun()
 
 # ---------- ROUTING ----------
