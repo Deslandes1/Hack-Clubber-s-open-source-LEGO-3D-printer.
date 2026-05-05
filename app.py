@@ -16,21 +16,46 @@ if "authenticated" not in st.session_state:
 if "demo_mode" not in st.session_state:
     st.session_state.demo_mode = False
 
-# ---------- STYLING (dark theme, animations) ----------
+# ---------- STYLING (compact, scrollable story, reduced margins) ----------
 st.markdown(r"""
 <style>
     .stApp { background: linear-gradient(135deg, #0b1120, #1a2332); }
+    /* Reduce top padding of main container */
+    .main .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 0rem !important;
+    }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .spinning-globe { display: inline-block; animation: spin 4s linear infinite; font-size: 3rem; }
-    .power-symbol { font-size: 3rem; text-align: center; animation: pulse 1.5s infinite; }
+    .power-symbol { font-size: 2.5rem; text-align: center; animation: pulse 1.5s infinite; margin-bottom: 0.5rem; }
     @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
-    .story-text { font-family: 'Georgia', serif; font-size: 1.2rem; line-height: 1.6; color: #e0e0e0; background: rgba(0,0,0,0.4); padding: 1.5rem; border-radius: 20px; border-left: 5px solid #ff6b6b; }
-    h1, h2, h3 { color: #ffaa66 !important; }
+    /* Scrollable story text */
+    .story-text {
+        font-family: 'Georgia', serif;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #e0e0e0;
+        background: rgba(0,0,0,0.4);
+        padding: 0.8rem;
+        border-radius: 15px;
+        border-left: 4px solid #ff6b6b;
+        max-height: 200px;
+        overflow-y: auto;
+        margin-bottom: 0.5rem;
+    }
+    /* Smaller headings */
+    h1, h2, h3 { color: #ffaa66 !important; margin-top: 0 !important; margin-bottom: 0.2rem !important; }
+    h1 { font-size: 2rem !important; }
+    h2 { font-size: 1.3rem !important; }
     .stMarkdown, .stSidebar .stMarkdown { color: #fff !important; }
-    .stButton button { background-color: #ff6b6b !important; color: white !important; border-radius: 30px !important; font-weight: bold !important; }
+    .stButton button { background-color: #ff6b6b !important; color: white !important; border-radius: 30px !important; font-weight: bold !important; padding: 0.2rem 1rem !important; }
     [data-testid="stSidebar"] { background: #0a0f1a; border-right: 1px solid #2a3a4a; }
-    .pricing-card, .real-software-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 1rem; margin: 1rem 0; border: 1px solid #ffaa66; }
+    .pricing-card, .real-software-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 0.6rem; margin: 0.5rem 0; border: 1px solid #ffaa66; font-size: 0.9rem; }
     .real-software-card a { color: #ffaa66; text-decoration: none; font-weight: bold; }
+    /* Video container compact */
+    .stVideo { margin: 0.5rem 0; }
+    /* Hide Streamlit footer bar (optional) */
+    footer { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -50,7 +75,7 @@ def login_page():
             else:
                 st.error("Incorrect password.")
 
-# ---------- MAIN APP ----------
+# ---------- MAIN APP (compact layout, no scroll) ----------
 def main_app():
     # ========== SIDEBAR ==========
     with st.sidebar:
@@ -101,12 +126,19 @@ def main_app():
         if demo_mode != st.session_state.demo_mode:
             st.session_state.demo_mode = demo_mode
             st.rerun()
+        
+        # ---- Logout button moved here ----
+        if st.button("Logout", key="logout_btn"):
+            st.session_state.authenticated = False
+            st.session_state.demo_mode = False
+            st.rerun()
 
-    # ========== MAIN CONTENT ==========
+    # ========== MAIN CONTENT (compact) ==========
     st.markdown('<div class="power-symbol" style="display: flex; justify-content: center; gap: 20px;">🧠 🖨️ ⚡ 🔧</div>', unsafe_allow_html=True)
     st.title("Not every breakthrough starts in a lab.")
     st.markdown("### Some start with curiosity, creativity—and a box of bricks.")
 
+    # Scrollable story text
     st.markdown("""
     <div class="story-text">
     An 18-year-old Hack Clubber built an open-source 3D printer made from <strong>92% LEGO</strong> that actually works.  
@@ -118,7 +150,7 @@ def main_app():
     It’s a signal of where innovation is heading:
 
     - Barriers to entry are collapsing  
-    - Open-source accelerates experimentation  
+    - Open-source is accelerating experimentation  
     - Hardware + creativity is accessible to anyone, anywhere  
 
     <br>
@@ -141,24 +173,19 @@ def main_app():
     </div>
     """, unsafe_allow_html=True)
 
-    # ========== DEMO SECTION (video + realistic chip) ==========
+    # ========== DEMO SECTION ==========
     if st.session_state.demo_mode:
-        st.markdown("---")
         st.markdown("## 🎬 Demo: Studprint in Action")
-        
-        # Video
+        # Video (compact)
         try:
             st.video(VIDEO_URL)
-        except Exception as e:
-            st.error(f"Video not available: {e}")
+        except Exception:
             st.markdown(f"[Watch the demo video here]({VIDEO_URL})")
         
-        # Realistic 3D chip model (not LEGO)
+        # Realistic 3D chip (compact height)
         st.markdown("### 🧠 The Brain of Studprint – Interactive 3D Chip")
-        st.markdown("_(Rotate and zoom to explore the microcontroller that powers the printer)_")
-        
         chip_3d_html = """
-        <div id="chip-viewer" style="height: 450px; width: 100%; border-radius: 20px; overflow: hidden;"></div>
+        <div id="chip-viewer" style="height: 360px; width: 100%; border-radius: 20px; overflow: hidden;"></div>
         <script type="importmap">
             {
                 "imports": {
@@ -175,7 +202,6 @@ def main_app():
             const container = document.getElementById('chip-viewer');
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0x0a0f1a);
-            scene.fog = new THREE.FogExp2(0x0a0f1a, 0.015);
             
             const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
             camera.position.set(3, 2, 4);
@@ -198,55 +224,42 @@ def main_app():
             controls.enableDamping = true;
             controls.autoRotate = true;
             controls.autoRotateSpeed = 1.0;
-            controls.enableZoom = true;
             
-            // ----- Chip body (black epoxy) -----
-            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.3, metalness: 0.1, emissive: 0x111111 });
+            // Chip body
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.3, metalness: 0.1 });
             const chipBase = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.3, 2.0), bodyMat);
             chipBase.castShadow = true;
-            chipBase.receiveShadow = true;
             scene.add(chipBase);
             
-            // -- Subtle top surface with slight gloss
             const topMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.2, metalness: 0.4 });
             const chipTop = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.05, 1.8), topMat);
             chipTop.position.y = 0.18;
-            chipTop.castShadow = true;
             scene.add(chipTop);
             
-            // -- Gold pins (two rows on each side)
-            const pinMat = new THREE.MeshStandardMaterial({ color: 0xccaa33, metalness: 0.9, roughness: 0.2 });
-            const pinLength = 0.4;
-            const pinWidth = 0.08;
-            const pinHeight = 0.08;
-            const positions = [
-                // left side (x negative)
-                [[-1.05, 0,  -0.7], [-1.05, 0, -0.3], [-1.05, 0, 0.1], [-1.05, 0, 0.5], [-1.05, 0, 0.9]],
-                // right side (x positive)
-                [[ 1.05, 0,  -0.7], [ 1.05, 0, -0.3], [ 1.05, 0, 0.1], [ 1.05, 0, 0.5], [ 1.05, 0, 0.9]],
-                // bottom (z negative)
-                [[-0.7, 0, -1.05], [-0.3, 0, -1.05], [0.1, 0, -1.05], [0.5, 0, -1.05], [0.9, 0, -1.05]],
-                // top (z positive)
-                [[-0.7, 0,  1.05], [-0.3, 0,  1.05], [0.1, 0,  1.05], [0.5, 0,  1.05], [0.9, 0,  1.05]]
+            // Pins
+            const pinMat = new THREE.MeshStandardMaterial({ color: 0xccaa33, metalness: 0.9 });
+            const pinPositions = [
+                [[-1.05,0,-0.7],[-1.05,0,-0.3],[-1.05,0,0.1],[-1.05,0,0.5],[-1.05,0,0.9]],
+                [[ 1.05,0,-0.7],[ 1.05,0,-0.3],[ 1.05,0,0.1],[ 1.05,0,0.5],[ 1.05,0,0.9]],
+                [[-0.7,0,-1.05],[-0.3,0,-1.05],[0.1,0,-1.05],[0.5,0,-1.05],[0.9,0,-1.05]],
+                [[-0.7,0, 1.05],[-0.3,0, 1.05],[0.1,0, 1.05],[0.5,0, 1.05],[0.9,0, 1.05]]
             ];
-            positions.forEach(side => {
+            pinPositions.forEach(side => {
                 side.forEach(pos => {
-                    const pin = new THREE.Mesh(new THREE.BoxGeometry(pinWidth, pinHeight, pinLength), pinMat);
-                    pin.position.set(pos[0], pos[1] - 0.12, pos[2]);
+                    const pin = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.4), pinMat);
+                    pin.position.set(pos[0], pos[1]-0.12, pos[2]);
                     pin.castShadow = true;
                     scene.add(pin);
                 });
             });
             
-            // -- Markings (text using CSS2DRenderer)
-            function makeLabel(text, x, y, z, fontSize = '14px') {
+            function makeLabel(text, x, y, z, size='14px') {
                 const div = document.createElement('div');
                 div.textContent = text;
                 div.style.color = '#ffaa66';
-                div.style.fontSize = fontSize;
+                div.style.fontSize = size;
                 div.style.fontWeight = 'bold';
                 div.style.fontFamily = 'monospace';
-                div.style.textShadow = '1px 1px 0px black';
                 div.style.background = 'rgba(0,0,0,0.6)';
                 div.style.padding = '2px 6px';
                 div.style.borderRadius = '8px';
@@ -257,35 +270,23 @@ def main_app():
             }
             makeLabel('Studprint', 0, 0.35, 0, '16px');
             makeLabel('ARM Cortex-M4', 0, -0.15, 1.2, '12px');
-            makeLabel('Rev 1.0', 0, -0.15, -1.2, '12px');
             
-            // -- Simple environment lighting
             const ambientLight = new THREE.AmbientLight(0x404060);
             scene.add(ambientLight);
             const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
             mainLight.position.set(2, 3, 4);
             mainLight.castShadow = true;
             scene.add(mainLight);
-            const fillLight = new THREE.PointLight(0x88aaff, 0.3);
-            fillLight.position.set(1, 2, 1);
-            scene.add(fillLight);
-            const backLight = new THREE.PointLight(0xffaa66, 0.2);
-            backLight.position.set(-1, 1, -2);
-            scene.add(backLight);
             
-            // -- Ground reflection (simple plane)
-            const groundPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(6, 6),
-                new THREE.ShadowMaterial({ opacity: 0.4, color: 0x000000, transparent: true })
-            );
-            groundPlane.rotation.x = -Math.PI / 2;
+            const groundPlane = new THREE.Mesh(new THREE.PlaneGeometry(6,6), new THREE.ShadowMaterial({ opacity: 0.3, transparent: true }));
+            groundPlane.rotation.x = -Math.PI/2;
             groundPlane.position.y = -0.4;
             groundPlane.receiveShadow = true;
             scene.add(groundPlane);
             
             function animate() {
                 requestAnimationFrame(animate);
-                controls.update(); // auto-rotate handled by controls.autoRotate
+                controls.update();
                 renderer.render(scene, camera);
                 labelRenderer.render(scene, camera);
             }
@@ -301,17 +302,12 @@ def main_app():
             });
         </script>
         """
-        components.html(chip_3d_html, height=500)
+        components.html(chip_3d_html, height=380)
 
-    # Call to action
+    # Compact call to action (small text)
     st.markdown("---")
     st.markdown("### 🚀 Ready to build your own breakthrough?")
-    st.markdown("Contact us for a free 15‑min consultation or explore the pricing plans on the sidebar.")
-
-    if st.button("Logout", key="logout_btn"):
-        st.session_state.authenticated = False
-        st.session_state.demo_mode = False
-        st.rerun()
+    st.markdown("Contact us for a free consultation or see sidebar for pricing.")
 
 # ---------- ROUTING ----------
 if not st.session_state.authenticated:
