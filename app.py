@@ -15,9 +15,9 @@ st.set_page_config(
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "app_mode" not in st.session_state:
-    st.session_state.app_mode = "Story & Demo"  # or "Real Software"
+    st.session_state.app_mode = "Story & Demo"
 
-# ---------- STYLING ----------
+# ---------- STYLING (white text for everything) ----------
 st.markdown(r"""
 <style>
     .stApp { background: linear-gradient(135deg, #0b1120, #1a2332); }
@@ -34,7 +34,26 @@ st.markdown(r"""
     h1, h2, h3 { color: #ffaa66 !important; margin-top: 0 !important; margin-bottom: 0.2rem !important; }
     h1 { font-size: 2rem !important; }
     h2 { font-size: 1.3rem !important; }
-    .stMarkdown, .stSidebar .stMarkdown { color: #fff !important; }
+    /* Force all text white in main area and sidebar */
+    .stMarkdown, .stRadio label, .stTextInput label, .stButton button p, .stCaption, .stSelectbox label, .stMetric label, .stMetric div, .stProgress p {
+        color: white !important;
+    }
+    /* Radio button labels (Story & Demo / Real Software) */
+    .stRadio div[role="radiogroup"] label {
+        color: white !important;
+    }
+    /* Metric values (temperature numbers) */
+    .stMetric .stMetric-value {
+        color: white !important;
+    }
+    /* Progress bar text */
+    .stProgress .stProgress-text {
+        color: white !important;
+    }
+    /* Image caption */
+    .stImage figcaption {
+        color: white !important;
+    }
     .stButton button { background-color: #ff6b6b !important; color: white !important; border-radius: 30px !important; font-weight: bold !important; padding: 0.2rem 1rem !important; }
     [data-testid="stSidebar"] { background: #0a0f1a; border-right: 1px solid #2a3a4a; }
     .pricing-card, .real-software-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 0.6rem; margin: 0.5rem 0; border: 1px solid #ffaa66; font-size: 0.9rem; }
@@ -44,6 +63,8 @@ st.markdown(r"""
     /* Real software dashboard styling */
     .printer-status { background: #0f172a; border-radius: 15px; padding: 1rem; margin: 1rem 0; border: 1px solid #ffaa66; }
     .temp-bar { height: 8px; background: #ffaa66; border-radius: 5px; transition: width 0.3s; }
+    /* Webcam symbol placeholder text */
+    .camera-symbol { font-size: 2rem; display: block; text-align: center; margin-bottom: 0.5rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -98,7 +119,6 @@ def real_software():
         st.warning("Print cancelled.")
 
     if st.session_state.print_running:
-        # Simulate progress
         if st.session_state.progress < 100:
             st.session_state.progress += random.randint(2, 5)
             if st.session_state.progress > 100:
@@ -109,7 +129,6 @@ def real_software():
             st.success("Print completed! 🎉")
             st.session_state.print_running = False
             st.balloons()
-        # Simulate temperature changes
         st.session_state.temp_nozzle = 210 + random.uniform(-2, 2)
         st.session_state.temp_bed = 60 + random.uniform(-1, 1)
         st.rerun()
@@ -127,9 +146,10 @@ def real_software():
         if st.button("Fan Off"):
             st.info("Fan OFF")
 
-    # Status display
+    # Live Webcam Feed (with visible camera symbol)
     st.markdown("---")
     st.markdown("### 📡 Live Webcam Feed (simulated)")
+    st.markdown('<div class="camera-symbol">📷 🔴 LIVE</div>', unsafe_allow_html=True)
     st.image("https://via.placeholder.com/640x360?text=Studprint+Camera+Feed", caption="Camera Preview", use_container_width=True)
     st.caption("Real software: This controller communicates with the actual Studprint printer via USB. All commands are simulated in this demo.")
 
