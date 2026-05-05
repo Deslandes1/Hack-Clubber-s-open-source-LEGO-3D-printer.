@@ -1,12 +1,8 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# ============================================================
-#  You can also replace VIDEO_URL with a direct public .mp4 link
-#  if you have one (e.g., from Dropbox, Google Drive, or raw GitHub).
-# ============================================================
-# VIDEO_URL = "https://raw.githubusercontent.com/Deslandes1/Hack-Clubber-s-open-source-LEGO-3D-printer/main/Demo1.mp4"
-# But GitHub raw doesn't always stream well. We'll use file upload.
+# Direct video URL
+VIDEO_URL = "https://raw.githubusercontent.com/Deslandes1/Hack-Clubber-s-open-source-LEGO-3D-printer./main/Demo1.mp4"
 
 st.set_page_config(
     page_title="The Future of Innovation | Studprint Story",
@@ -20,72 +16,21 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "demo_mode" not in st.session_state:
     st.session_state.demo_mode = False
-if "video_file" not in st.session_state:
-    st.session_state.video_file = None
 
 # ---------- CUSTOM CSS ----------
 st.markdown(r"""
 <style>
-    .stApp {
-        background: linear-gradient(135deg, #0b1120, #1a2332);
-    }
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    .spinning-globe {
-        display: inline-block;
-        animation: spin 4s linear infinite;
-        font-size: 3rem;
-    }
-    .power-symbol {
-        font-size: 3rem;
-        text-align: center;
-        animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-        0% { transform: scale(1); opacity: 0.8; }
-        50% { transform: scale(1.1); opacity: 1; }
-        100% { transform: scale(1); opacity: 0.8; }
-    }
-    .story-text {
-        font-family: 'Georgia', serif;
-        font-size: 1.2rem;
-        line-height: 1.6;
-        color: #e0e0e0;
-        background: rgba(0,0,0,0.4);
-        padding: 1.5rem;
-        border-radius: 20px;
-        border-left: 5px solid #ff6b6b;
-    }
-    h1, h2, h3 {
-        color: #ffaa66 !important;
-    }
-    .stMarkdown, .stSidebar .stMarkdown {
-        color: #ffffff !important;
-    }
-    .stButton button {
-        background-color: #ff6b6b !important;
-        color: white !important;
-        border-radius: 30px !important;
-        font-weight: bold !important;
-    }
-    [data-testid="stSidebar"] {
-        background: #0a0f1a;
-        border-right: 1px solid #2a3a4a;
-    }
-    .pricing-card {
-        background: rgba(255,255,255,0.05);
-        border-radius: 15px;
-        padding: 1rem;
-        margin: 1rem 0;
-        border: 1px solid #ffaa66;
-    }
-    .video-container {
-        margin: 2rem 0;
-        border-radius: 20px;
-        overflow: hidden;
-    }
+    .stApp { background: linear-gradient(135deg, #0b1120, #1a2332); }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .spinning-globe { display: inline-block; animation: spin 4s linear infinite; font-size: 3rem; }
+    .power-symbol { font-size: 3rem; text-align: center; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
+    .story-text { font-family: 'Georgia', serif; font-size: 1.2rem; line-height: 1.6; color: #e0e0e0; background: rgba(0,0,0,0.4); padding: 1.5rem; border-radius: 20px; border-left: 5px solid #ff6b6b; }
+    h1, h2, h3 { color: #ffaa66 !important; }
+    .stMarkdown, .stSidebar .stMarkdown { color: #ffffff !important; }
+    .stButton button { background-color: #ff6b6b !important; color: white !important; border-radius: 30px !important; font-weight: bold !important; }
+    [data-testid="stSidebar"] { background: #0a0f1a; border-right: 1px solid #2a3a4a; }
+    .pricing-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 1rem; margin: 1rem 0; border: 1px solid #ffaa66; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -142,14 +87,6 @@ def main_app():
             st.session_state.demo_mode = demo_mode
             st.rerun()
 
-        # If demo mode is on, allow video upload (once)
-        if st.session_state.demo_mode:
-            st.markdown("**Upload the demo video (only once):**")
-            uploaded_video = st.file_uploader("Choose MP4 file", type=["mp4"], key="demo_video_upload")
-            if uploaded_video is not None:
-                st.session_state.video_file = uploaded_video
-                st.success("Video loaded! It will play below.")
-
     # ----- MAIN CONTENT (story) -----
     st.markdown('<div class="power-symbol" style="display: flex; justify-content: center; gap: 20px;">🧱 🖨️ ⚡🔧</div>', unsafe_allow_html=True)
     st.title("Not every breakthrough starts in a lab.")
@@ -163,8 +100,8 @@ def main_app():
     <br><br>
 
     Let that sink in.  
-    This isn’t just a cool project.  
-    It’s a signal of where innovation is heading:
+    This isn't just a cool project.  
+    It's a signal of where innovation is heading:
 
     - Barriers to entry are collapsing  
     - Open-source is accelerating experimentation  
@@ -173,21 +110,21 @@ def main_app():
     <br>
 
     And maybe most important:  
-    <strong>The next generation isn’t waiting for permission to build.</strong>  
-    They’re already doing it.  
+    <strong>The next generation isn't waiting for permission to build.</strong>  
+    They're already doing it.  
 
     When talent meets the right tools, age becomes irrelevant.  
     What matters is mindset, access, and the willingness to create.
 
     <br>
 
-    We’re moving into a world where innovation doesn’t come top‑down.  
+    We're moving into a world where innovation doesn't come top‑down.  
     It emerges from everywhere.  
 
     <br>
 
     🔥 The question is no longer <em>who will build the future?</em>  
-    It’s <strong>how fast can we keep up with them?</strong>
+    It's <strong>how fast can we keep up with them?</strong>
     </div>
     """, unsafe_allow_html=True)
 
@@ -195,17 +132,18 @@ def main_app():
     if st.session_state.demo_mode:
         st.markdown("---")
         st.markdown("## 🎬 Demo: Studprint in Action")
-
-        # 1. Display video if available
-        if st.session_state.video_file is not None:
-            st.video(st.session_state.video_file)
-        else:
-            st.info("Please upload the demo video using the sidebar 📂 (MP4 file).")
-
-        # 2. Simple 3D placeholder using Three.js (LEGO brick)
+        
+        # Video embed
+        try:
+            st.video(VIDEO_URL)
+        except Exception as e:
+            st.error(f"Could not load video: {e}")
+            st.markdown(f"[Watch the demo video here]({VIDEO_URL})")
+        
+        # 3D Model
         st.markdown("### 🧱 Interactive 3D LEGO Model")
-        st.markdown("_(Rotate and zoom to explore – this is a placeholder for the full 3D printer model)_")
-
+        st.markdown("_(Rotate and zoom to explore)_")
+        
         lego_3d_html = """
         <div id="lego-viewer" style="height: 400px; width: 100%; border-radius: 20px; overflow: hidden;"></div>
         <script type="importmap">
@@ -232,13 +170,12 @@ def main_app():
             const controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
 
-            // A simple LEGO brick (2x4 studs)
+            // LEGO brick group
             const group = new THREE.Group();
             const redMat = new THREE.MeshStandardMaterial({ color: 0xcc0000 });
             const base = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.4, 0.8), redMat);
             base.position.y = 0;
             group.add(base);
-            // Studs
             const studMat = new THREE.MeshStandardMaterial({ color: 0xcc0000 });
             for (let x = -0.6; x <= 0.6; x+=0.6) {
                 for (let z = -0.3; z <= 0.3; z+=0.3) {
@@ -282,7 +219,6 @@ def main_app():
     if st.button("Logout", key="logout_btn"):
         st.session_state.authenticated = False
         st.session_state.demo_mode = False
-        st.session_state.video_file = None
         st.rerun()
 
 # ---------- ROUTING ----------
