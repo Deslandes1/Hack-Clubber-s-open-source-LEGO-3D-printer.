@@ -60,11 +60,24 @@ st.markdown(r"""
     .real-software-card a { color: #ffaa66; text-decoration: none; font-weight: bold; }
     .stVideo { margin: 0.5rem 0; }
     footer { display: none; }
-    /* Real software dashboard styling */
-    .printer-status { background: #0f172a; border-radius: 15px; padding: 1rem; margin: 1rem 0; border: 1px solid #ffaa66; }
-    .temp-bar { height: 8px; background: #ffaa66; border-radius: 5px; transition: width 0.3s; }
-    /* Webcam symbol placeholder text */
-    .camera-symbol { font-size: 2rem; display: block; text-align: center; margin-bottom: 0.5rem; }
+    /* Webcam feed styling */
+    .camera-feed-container {
+        background: #0f172a;
+        border-radius: 15px;
+        padding: 1rem;
+        text-align: center;
+        border: 1px solid #ffaa66;
+    }
+    .camera-icon {
+        font-size: 3rem;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+    }
+    .camera-label {
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -146,11 +159,18 @@ def real_software():
         if st.button("Fan Off"):
             st.info("Fan OFF")
 
-    # Live Webcam Feed (with visible camera symbol)
+    # Live Webcam Feed (replaced placeholder with camera illustration)
     st.markdown("---")
     st.markdown("### 📡 Live Webcam Feed (simulated)")
-    st.markdown('<div class="camera-symbol">📷 🔴 LIVE</div>', unsafe_allow_html=True)
-    st.image("https://via.placeholder.com/640x360?text=Studprint+Camera+Feed", caption="Camera Preview", use_container_width=True)
+    st.markdown("""
+    <div class="camera-feed-container">
+        <div class="camera-icon">📷🔴</div>
+        <div class="camera-label">Live Stream Active</div>
+        <div style="background:#000; border-radius:10px; padding:1rem; margin-top:0.5rem;">
+            <span style="color:#fff;">⏵ Camera is online – video feed placeholder</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     st.caption("Real software: This controller communicates with the actual Studprint printer via USB. All commands are simulated in this demo.")
 
 # ---------- DEMO MODE (original story + video + chip) ----------
